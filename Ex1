@@ -1,0 +1,12 @@
+public class Calculadora {
+
+    public static void main(String[] args) {
+        int n1 = 100;
+        int n2 = 700;
+        int resultado = somarNumeros(n1, n2);
+        System.out.println("A soma de " + n1 + " e " + n2 + " é: " + resultado);
+    }
+    public static int somarNumeros(int a, int b) {
+        return a + b;
+    }
+}
