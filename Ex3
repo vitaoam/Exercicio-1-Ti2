@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produto</title>
+</head>
+<body>
+    <h1>Gerenciamento de Produtos</h1>
+
+    <h2>Listar Produtos</h2>
+    <button onclick="listarProdutos()">Listar Produtos</button>
+    <div id="listaProdutos"></div>
+
+    <h2>Inserir Produto</h2>
+    <form id="formInserir" onsubmit="inserirProduto(); return false;">
+        <label for="nome">Nome do Produto:</label>
+        <input type="text" id="nome" name="nome" required>
+        <button type="submit">Inserir Produto</button>
+    </form>
+
+    <h2>Excluir Produto</h2>
+    <form id="formExcluir" onsubmit="excluirProduto(); return false;">
+        <label for="idExcluir">ID do Produto:</label>
+        <input type="number" id="idExcluir" name="idExcluir" required>
+        <button type="submit">Excluir Produto</button>
+    </form>
+
+    <h2>Atualizar Produto</h2>
+    <form id="formAtualizar" onsubmit="atualizarProduto(); return false;">
+        <label for="idAtualizar">ID do Produto:</label>
+        <input type="number" id="idAtualizar" name="idAtualizar" required><br>
+        <label for="novoNome">Novo Nome:</label>
+        <input type="text" id="novoNome" name="novoNome" required>
+        <button type="submit">Atualizar Produto</button>
+    </form>
+
+    <script>
+        function listarProdutos() {
+            fetch('http://localhost:8080/listarProdutos')
+            .then(response => response.json())
+            .then(data => {
+                let listaProdutos = document.getElementById('listaProdutos');
+                listaProdutos.innerHTML = '';
+                data.forEach(produto => {
+                    listaProdutos.innerHTML += `${produto.id} - ${produto.nome}<br>`;
+                });
+            });
+        }
+
+        function inserirProduto() {
+            let nome = document.getElementById('nome').value;
+            fetch('http://localhost:8080/inserirProduto', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ nome: nome })
+            })
+            .then(response => {
+                if (response.ok) {
+                    listarProdutos();
+                    document.getElementById('formInserir').reset();
+                }
+            });
+        }
+
+        function excluirProduto() {
+            let id = document.getElementById('idExcluir').value;
+            fetch(`http://localhost:8080/excluirProduto?id=${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    listarProdutos();
+                    document.getElementById('formExcluir').reset();
+                }
+            });
+        }
+
+        function atualizarProduto() {
+            let id = document.getElementById('idAtualizar').value;
+            let novoNome = document.getElementById('novoNome').value;
+            fetch('http://localhost:8080/atualizarProduto', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id: id, nome: novoNome })
+            })
+            .then(response => {
+                if (response.ok) {
+                    listarProdutos();
+                    document.getElementById('formAtualizar').reset();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
